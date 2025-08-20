@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-git
+  namespace: argocd
+spec:
+  generators:
+    # matrix 'parent' generator
+    - matrix:
+        generators:
+          # git generator, 'child' #1
+          - git:
+              repoURL: https://gitee.com/gmkk/argocd-example-apps.git
+              revision: main
+              directories:
+              - path: applicationsets/demoapps/*
+          # cluster generator, 'child' #2
+          - clusters: {}
+  template:
+    metadata:
+      name: '{{path.basename}}-{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://gitee.com/gmkk/argocd-example-apps.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: '{{server}}'
+        namespace: '{{name}}-{{path.basename}}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true  
+        # automated: 
+        #  prune: true 

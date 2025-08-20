@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo1-guestbook-ui
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: demo1-guestbook-ui
+  template:
+    metadata:
+      labels:
+        app: demo1-guestbook-ui
+    spec:
+      containers:
+      - image: nginx:latest
+        name: demo1-guestbook-ui
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
